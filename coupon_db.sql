@@ -1,0 +1,63 @@
+CREATE DATABASE coupon_db;
+
+USE coupon_db;
+
+-- Table for storing coupons
+CREATE TABLE coupons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    is_claimed BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Table for tracking claims
+CREATE TABLE claims (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    coupon_id INT,
+    ip_address VARCHAR(50),
+    browser_session VARCHAR(100),
+    claim_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (coupon_id) REFERENCES coupons(id)
+);
+
+-- Table for admin credentials
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL
+);
+
+-- Insert sample admin credentials
+INSERT INTO admin (username, password) VALUES ('admin', 'admin123');
+INSERT INTO coupons (code) VALUES ('COUPON1'), ('COUPON2'), ('COUPON3');
+INSERT INTO coupons (code, is_claimed, is_active) VALUES
+('COUPON001', FALSE, TRUE),
+('COUPON002', FALSE, TRUE),
+('COUPON003', FALSE, TRUE),
+('COUPON004', FALSE, TRUE),
+('COUPON005', FALSE, TRUE),
+('COUPON006', FALSE, TRUE),
+('COUPON007', FALSE, TRUE),
+('COUPON008', FALSE, TRUE),
+('COUPON009', FALSE, TRUE),
+('COUPON010', FALSE, TRUE),
+('COUPON011', FALSE, TRUE),
+('COUPON012', FALSE, TRUE),
+('COUPON013', FALSE, TRUE),
+('COUPON014', FALSE, TRUE),
+('COUPON015', FALSE, TRUE),
+('COUPON016', FALSE, TRUE),
+('COUPON017', FALSE, TRUE),
+('COUPON018', FALSE, TRUE),
+('COUPON019', FALSE, TRUE),
+('COUPON020', FALSE, TRUE),
+('COUPON021', FALSE, TRUE),
+('COUPON022', FALSE, TRUE),
+('COUPON023', FALSE, TRUE),
+('COUPON024', FALSE, TRUE),
+('COUPON025', FALSE, TRUE),
+('COUPON026', FALSE, TRUE),
+('COUPON027', FALSE, TRUE),
+('COUPON028', FALSE, TRUE),
+('COUPON029', FALSE, TRUE),
+('COUPON030', FALSE, TRUE);
