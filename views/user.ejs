@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claim Coupon</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #fff;
+        text-align: center;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        max-width: 400px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      select,
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background: #6a11cb;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+        margin: 10px 0;
+        width: 100%;
+      }
+
+      select:hover,
+      button:hover {
+        background: #2575fc;
+      }
+
+      #message {
+        margin-top: 20px;
+        font-size: 18px;
+        color: green;
+      }
+
+      .coupon-display {
+        margin-top: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: none; /* Hidden by default */
+      }
+
+      .coupon-display p {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #333;
+      }
+
+      .coupon-display button {
+        margin-top: 10px;
+        background: #2575fc;
+      }
+
+      .coupon-display button:hover {
+        background: #6a11cb;
+      }
+
+      .back-link {
+        display: block;
+        margin-top: 20px;
+        font-size: 16px;
+        color: #6a11cb;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Claim Your Coupon</h1>
+
+      <!-- Dropdown to select a coupon -->
+      <select id="coupon-select">
+        <option value="" disabled selected>Select a coupon</option>
+      </select>
+
+      <button id="claim-btn">Claim Coupon</button>
+      <div id="message"></div>
+
+      <!-- Coupon Display Section -->
+      <div class="coupon-display" id="coupon-display">
+        <p>Your Coupon Code: <span id="coupon-code"></span></p>
+        <button id="copy-btn">Copy Code</button>
+      </div>
+
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+      // Fetch available coupons and populate the dropdown
+      fetch("/available-coupons")
+        .then((response) => response.json())
+        .then((coupons) => {
+          const select = document.getElementById("coupon-select");
+          coupons.forEach((coupon) => {
+            const option = document.createElement("option");
+            option.value = coupon.id;
+            option.textContent = coupon.code;
+            select.appendChild(option);
+          });
+        })
+        .catch((error) => console.error("Error fetching coupons:", error));
+
+      // Claim Coupon Logic
+      document.getElementById("claim-btn").addEventListener("click", () => {
+        const couponId = document.getElementById("coupon-select").value;
+
+        if (!couponId) {
+          alert("Please select a coupon.");
+          return;
+        }
+
+        fetch(`/claim-coupon/${couponId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              document.getElementById("message").textContent = data.message;
+              document.getElementById("coupon-code").textContent = data.coupon; // Display the coupon code
+              document.getElementById("coupon-display").style.display = "block"; // Show coupon display
+            } else {
+              document.getElementById("message").textContent = data.error;
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      });
+
+      // Copy Coupon Code Logic
+      document.getElementById("copy-btn").addEventListener("click", () => {
+        const couponCode = document.getElementById("coupon-code").textContent;
+        navigator.clipboard
+          .writeText(couponCode)
+          .then(() => {
+            alert("Coupon code copied to clipboard!");
+          })
+          .catch(() => {
+            alert("Failed to copy coupon code.");
+          });
+      });
+    </script>
+  </body>
+</html>
